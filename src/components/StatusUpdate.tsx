@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useBond } from '@/context/BondContext';
 import { cn } from '@/lib/utils';
 import { HeartHandshake, Activity, Calendar } from 'lucide-react';
@@ -16,10 +16,29 @@ const StatusUpdate: React.FC<StatusUpdateProps> = ({ className }) => {
     partnerStatus, 
     partnerActivity, 
     partnerPlan,
-    currentTheme 
+    currentTheme,
+    syncStatus,
+    syncActivity,
+    syncPlan
   } = useBond();
   
   const [activeTab, setActiveTab] = useState<'status' | 'activity' | 'plan'>('status');
+  const [statusInput, setStatusInput] = useState(myStatus);
+  const [activityInput, setActivityInput] = useState(myActivity);
+  const [planInput, setPlanInput] = useState(myPlan);
+
+  // Update local inputs when context values change
+  useEffect(() => {
+    setStatusInput(myStatus);
+  }, [myStatus]);
+
+  useEffect(() => {
+    setActivityInput(myActivity);
+  }, [myActivity]);
+
+  useEffect(() => {
+    setPlanInput(myPlan);
+  }, [myPlan]);
 
   const themeClasses = {
     spring: {
@@ -61,17 +80,38 @@ const StatusUpdate: React.FC<StatusUpdateProps> = ({ className }) => {
 
   const currentThemeClasses = themeClasses[currentTheme];
 
-  // Handle input changes
+  // Handle status changes with debounce
   const handleStatusChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMyStatus(e.target.value);
+    setStatusInput(e.target.value);
   };
 
+  // Handle activity changes with debounce
   const handleActivityChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMyActivity(e.target.value);
+    setActivityInput(e.target.value);
   };
 
+  // Handle plan changes with debounce
   const handlePlanChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMyPlan(e.target.value);
+    setPlanInput(e.target.value);
+  };
+
+  // Sync with context and database on blur
+  const handleStatusBlur = () => {
+    if (statusInput !== myStatus) {
+      setMyStatus(statusInput);
+    }
+  };
+
+  const handleActivityBlur = () => {
+    if (activityInput !== myActivity) {
+      setMyActivity(activityInput);
+    }
+  };
+
+  const handlePlanBlur = () => {
+    if (planInput !== myPlan) {
+      setMyPlan(planInput);
+    }
   };
 
   // Form submission is disabled - we update in real-time
@@ -133,24 +173,27 @@ const StatusUpdate: React.FC<StatusUpdateProps> = ({ className }) => {
             {activeTab === 'status' && (
               <textarea
                 placeholder="How are you feeling right now?"
-                value={myStatus}
+                value={statusInput}
                 onChange={handleStatusChange}
+                onBlur={handleStatusBlur}
                 className="w-full bg-transparent border border-white/30 rounded-lg p-2 min-h-[100px] focus:outline-none focus:ring-1 focus:ring-white/50"
               />
             )}
             {activeTab === 'activity' && (
               <textarea
                 placeholder="What are you doing right now?"
-                value={myActivity}
+                value={activityInput}
                 onChange={handleActivityChange}
+                onBlur={handleActivityBlur}
                 className="w-full bg-transparent border border-white/30 rounded-lg p-2 min-h-[100px] focus:outline-none focus:ring-1 focus:ring-white/50"
               />
             )}
             {activeTab === 'plan' && (
               <textarea
                 placeholder="What are your plans?"
-                value={myPlan}
+                value={planInput}
                 onChange={handlePlanChange}
+                onBlur={handlePlanBlur}
                 className="w-full bg-transparent border border-white/30 rounded-lg p-2 min-h-[100px] focus:outline-none focus:ring-1 focus:ring-white/50"
               />
             )}

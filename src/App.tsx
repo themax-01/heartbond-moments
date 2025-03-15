@@ -23,6 +23,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/create" element={<CreateBond />} />
             <Route path="/bond" element={<Bond />} />
+            <Route path="/join/:code" element={<CreateBond />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

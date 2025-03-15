@@ -9,7 +9,135 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      bond_data: {
+        Row: {
+          activity: string | null
+          bond_id: string
+          created_at: string | null
+          id: string
+          plan: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          activity?: string | null
+          bond_id: string
+          created_at?: string | null
+          id?: string
+          plan?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          activity?: string | null
+          bond_id?: string
+          created_at?: string | null
+          id?: string
+          plan?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bond_data_bond_id_fkey"
+            columns: ["bond_id"]
+            isOneToOne: false
+            referencedRelation: "bonds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bond_members: {
+        Row: {
+          bond_id: string
+          created_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          bond_id: string
+          created_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          bond_id?: string
+          created_at?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bond_members_bond_id_fkey"
+            columns: ["bond_id"]
+            isOneToOne: false
+            referencedRelation: "bonds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bond_settings: {
+        Row: {
+          bond_id: string
+          id: string
+          quote: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          bond_id: string
+          id?: string
+          quote?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          bond_id?: string
+          id?: string
+          quote?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bond_settings_bond_id_fkey"
+            columns: ["bond_id"]
+            isOneToOne: false
+            referencedRelation: "bonds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bonds: {
+        Row: {
+          code: string
+          created_at: string | null
+          id: string
+          name: string
+          reason: string | null
+          start_date: string | null
+          theme: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          id?: string
+          name: string
+          reason?: string | null
+          start_date?: string | null
+          theme?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+          reason?: string | null
+          start_date?: string | null
+          theme?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

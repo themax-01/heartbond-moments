@@ -19,7 +19,7 @@ const DEFAULT_QUOTES = [
 ];
 
 const QuoteDisplay: React.FC<QuoteDisplayProps> = ({ className }) => {
-  const { quote, setQuote, currentTheme } = useBond();
+  const { quote, setQuote, currentTheme, syncQuote } = useBond();
   const [isEditing, setIsEditing] = useState(false);
   const [editedQuote, setEditedQuote] = useState(quote);
   
@@ -34,6 +34,7 @@ const QuoteDisplay: React.FC<QuoteDisplayProps> = ({ className }) => {
   const handleSaveQuote = () => {
     setQuote(editedQuote);
     setIsEditing(false);
+    syncQuote();
   };
 
   const handleRandomQuote = () => {
@@ -45,6 +46,7 @@ const QuoteDisplay: React.FC<QuoteDisplayProps> = ({ className }) => {
     
     setQuote(newQuote);
     setEditedQuote(newQuote);
+    syncQuote();
   };
 
   return (
