@@ -21,7 +21,8 @@ const CreateBond: React.FC = () => {
     setHasBond,
     currentTheme,
     createBondWithSupabase,
-    joinBond
+    joinBond,
+    bondCode
   } = useBond();
   
   const [name, setName] = useState('');
@@ -30,7 +31,7 @@ const CreateBond: React.FC = () => {
   const [error, setError] = useState('');
   const [isCreateMode, setIsCreateMode] = useState(true);
   const [joinCode, setJoinCode] = useState('');
-  const [bondCode, setBondCode] = useState('');
+  const [localBondCode, setLocalBondCode] = useState('');
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -75,7 +76,7 @@ const CreateBond: React.FC = () => {
     
     const code = await createBondWithSupabase();
     if (code) {
-      setBondCode(code);
+      setLocalBondCode(code);
       setShowShareDialog(true);
       setHasBond(true);
     } else {
@@ -100,9 +101,19 @@ const CreateBond: React.FC = () => {
   };
 
   const copyCodeToClipboard = () => {
-    navigator.clipboard.writeText(bondCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    // Use the local bond code if available, otherwise fall back to the context bondCode
+    const codeToCopy = localBondCode || bondCode;
+    if (codeToCopy) {
+      navigator.clipboard.writeText(codeToCopy);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } else {
+      toast({
+        title: "Error",
+        description: "No bond code available to copy",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -255,7 +266,7 @@ const CreateBond: React.FC = () => {
           </DialogHeader>
           
           <div className="p-6 bg-secondary/20 rounded-lg text-center mt-4">
-            <h3 className="text-2xl font-bold tracking-widest">{bondCode}</h3>
+            <h3 className="text-2xl font-bold tracking-widest">{localBondCode || bondCode}</h3>
           </div>
           
           <div className="flex justify-center mt-4">
