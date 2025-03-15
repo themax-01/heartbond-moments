@@ -443,7 +443,7 @@ export const BondProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .select('id')
         .eq('bond_id', bondId)
         .eq('user_id', userId)
-        .is('status', 'not.null')
+        .not('status', 'is', null)
         .order('updated_at', { ascending: false })
         .limit(1);
 
@@ -495,7 +495,7 @@ export const BondProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .select('id')
         .eq('bond_id', bondId)
         .eq('user_id', userId)
-        .is('activity', 'not.null')
+        .not('activity', 'is', null)
         .order('updated_at', { ascending: false })
         .limit(1);
 
@@ -547,7 +547,7 @@ export const BondProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .select('id')
         .eq('bond_id', bondId)
         .eq('user_id', userId)
-        .is('plan', 'not.null')
+        .not('plan', 'is', null)
         .order('updated_at', { ascending: false })
         .limit(1);
 
