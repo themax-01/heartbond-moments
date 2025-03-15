@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -32,60 +33,15 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
@@ -96,6 +52,108 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
   }
+
+  html {
+    @apply scroll-smooth;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+  }
+
+  .glass-effect {
+    @apply backdrop-blur-sm bg-white/20 border border-white/30;
+  }
+
+  .spring-element {
+    @apply before:content-['🌸'] before:absolute before:text-2xl;
+  }
+  
+  .summer-element {
+    @apply before:content-['☀️'] before:absolute before:text-2xl;
+  }
+  
+  .autumn-element {
+    @apply before:content-['🍂'] before:absolute before:text-2xl;
+  }
+  
+  .winter-element {
+    @apply before:content-['❄️'] before:absolute before:text-2xl;
+  }
+  
+  .blossom-element {
+    @apply before:content-['🌺'] before:absolute before:text-2xl;
+  }
+
+  /* Theme transitions */
+  .theme-spring {
+    @apply bg-gradient-to-b from-spring-primary to-spring-secondary text-spring-accent;
+  }
+  
+  .theme-summer {
+    @apply bg-gradient-to-b from-summer-primary to-summer-secondary text-summer-accent;
+  }
+  
+  .theme-autumn {
+    @apply bg-gradient-to-b from-autumn-primary to-autumn-secondary text-autumn-accent;
+  }
+  
+  .theme-winter {
+    @apply bg-gradient-to-b from-winter-primary to-winter-secondary text-winter-accent;
+  }
+  
+  .theme-blossom {
+    @apply bg-gradient-to-b from-blossom-primary to-blossom-secondary text-blossom-accent;
+  }
+}
+
+/* Floating elements for themes */
+.floating-elements {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.floating-element {
+  position: absolute;
+  bottom: -10px;
+  animation: float-up 8s linear infinite;
+  opacity: 0;
+}
+
+/* Smooth page transitions */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 400ms, transform 400ms;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity 400ms, transform 400ms;
 }
