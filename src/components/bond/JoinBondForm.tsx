@@ -3,12 +3,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBond } from '@/context/BondContext';
 import { cn } from '@/lib/utils';
+import { toast } from '@/components/ui/use-toast';
 
 const JoinBondForm: React.FC = () => {
   const navigate = useNavigate();
   const { joinBond, currentTheme } = useBond();
   const [joinCode, setJoinCode] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const buttonClasses = {
     spring: "bg-spring-highlight hover:bg-spring-accent text-white",
@@ -24,9 +26,25 @@ const JoinBondForm: React.FC = () => {
       return;
     }
     
-    const success = await joinBond(joinCode.trim().toUpperCase());
-    if (success) {
-      navigate('/bond');
+    setIsLoading(true);
+    setError('');
+    
+    try {
+      const success = await joinBond(joinCode.trim().toUpperCase());
+      if (success) {
+        toast({
+          title: "Success!",
+          description: "You've joined the bond successfully!",
+        });
+        navigate('/bond');
+      } else {
+        setError('Failed to join bond. Please check the code and try again.');
+      }
+    } catch (err) {
+      setError('An error occurred. Please try again.');
+      console.error('Join bond error:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -53,12 +71,14 @@ const JoinBondForm: React.FC = () => {
 
       <button
         onClick={handleJoinBond}
+        disabled={isLoading}
         className={cn(
           "w-full px-4 py-2 rounded-lg transition-all",
-          buttonClasses[currentTheme]
+          buttonClasses[currentTheme],
+          isLoading && "opacity-70 cursor-not-allowed"
         )}
       >
-        Join Bond
+        {isLoading ? "Joining..." : "Join Bond"}
       </button>
     </div>
   );

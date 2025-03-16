@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useBond } from '@/context/BondContext';
 import ThemeSelector from '@/components/ThemeSelector';
 import { cn } from '@/lib/utils';
+import { toast } from '@/components/ui/use-toast';
 
 interface CreateBondFormProps {
   onBondCreated: (code: string) => void;
@@ -22,6 +23,7 @@ const CreateBondForm: React.FC<CreateBondFormProps> = ({ onBondCreated }) => {
   const [reason, setReason] = useState('');
   const [step, setStep] = useState(1);
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const buttonClasses = {
     spring: "bg-spring-highlight hover:bg-spring-accent text-white",
@@ -50,16 +52,30 @@ const CreateBondForm: React.FC<CreateBondFormProps> = ({ onBondCreated }) => {
   };
 
   const handleCreateBond = async () => {
-    setBondName(name);
-    setBondReason(reason);
-    setBondStartDate(new Date());
+    setIsLoading(true);
+    setError('');
     
-    const code = await createBondWithSupabase();
-    if (code) {
-      onBondCreated(code);
-      setHasBond(true);
-    } else {
-      setError('Could not create bond. Please try again.');
+    try {
+      setBondName(name);
+      setBondReason(reason);
+      setBondStartDate(new Date());
+      
+      const code = await createBondWithSupabase();
+      if (code) {
+        setHasBond(true);
+        onBondCreated(code);
+        toast({
+          title: "Bond Created!",
+          description: `Your bond code is: ${code}`,
+        });
+      } else {
+        setError('Could not create bond. Please try again.');
+      }
+    } catch (err) {
+      console.error('Create bond error:', err);
+      setError('An error occurred while creating your bond.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -118,6 +134,7 @@ const CreateBondForm: React.FC<CreateBondFormProps> = ({ onBondCreated }) => {
           <button
             onClick={() => setStep(step - 1)}
             className="px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 transition-all"
+            disabled={isLoading}
           >
             Back
           </button>
@@ -138,12 +155,14 @@ const CreateBondForm: React.FC<CreateBondFormProps> = ({ onBondCreated }) => {
         ) : (
           <button
             onClick={handleCreateBond}
+            disabled={isLoading}
             className={cn(
               "px-4 py-2 rounded-lg transition-all",
-              buttonClasses[currentTheme]
+              buttonClasses[currentTheme],
+              isLoading && "opacity-70 cursor-not-allowed"
             )}
           >
-            Create Bond
+            {isLoading ? "Creating..." : "Create Bond"}
           </button>
         )}
       </div>

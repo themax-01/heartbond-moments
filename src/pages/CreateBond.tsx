@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useBond } from '@/context/BondContext';
 import HeartAnimation from '@/components/HeartAnimation';
 import { cn } from '@/lib/utils';
@@ -23,7 +23,15 @@ const CreateBond: React.FC = () => {
     blossom: "bg-gradient-to-b from-blossom-primary to-blossom-secondary",
   };
 
+  // Check if we already have a bond code from context
+  useEffect(() => {
+    if (bondCode && !localBondCode) {
+      setLocalBondCode(bondCode);
+    }
+  }, [bondCode]);
+
   const handleBondCreated = (code: string) => {
+    console.log("Bond created with code:", code);
     setLocalBondCode(code);
     setShowShareDialog(true);
   };
