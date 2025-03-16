@@ -91,7 +91,7 @@ const Bond: React.FC = () => {
             </div>
             
             <div className="space-y-6">
-              <ThemeSelector />
+              <ThemeSelector showAutoTransition={true} />
               
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                 <h3 className="font-medium mb-2">Bond Information</h3>

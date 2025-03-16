@@ -7,11 +7,21 @@ import {
   Sun, 
   Leaf, 
   Snowflake, 
-  Cherry 
+  Cherry,
+  RotateCw
 } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 
-const ThemeSelector: React.FC = () => {
+interface ThemeSelectorProps {
+  showAutoTransition?: boolean;
+}
+
+const ThemeSelector: React.FC<ThemeSelectorProps> = ({ showAutoTransition = true }) => {
   const { currentTheme, setCurrentTheme } = useBond();
+  const [autoTransition, setAutoTransition] = React.useState(() => {
+    const saved = localStorage.getItem('autoThemeTransition');
+    return saved !== null ? saved === 'true' : true;
+  });
 
   const themes: { id: Theme; name: string; icon: React.ReactNode; color: string }[] = [
     { 
@@ -46,9 +56,28 @@ const ThemeSelector: React.FC = () => {
     },
   ];
 
+  const handleAutoTransitionChange = (checked: boolean) => {
+    setAutoTransition(checked);
+    localStorage.setItem('autoThemeTransition', checked.toString());
+  };
+
   return (
     <div className="glass-effect p-4 rounded-xl w-full max-w-xs">
-      <div className="text-center mb-3 font-medium">Choose Theme</div>
+      <div className="text-center mb-3 font-medium">Theme Settings</div>
+      
+      {showAutoTransition && (
+        <div className="flex items-center justify-between mb-4 p-2 bg-white/10 rounded-lg">
+          <div className="flex items-center gap-2">
+            <RotateCw size={16} />
+            <span>Auto Transition</span>
+          </div>
+          <Switch 
+            checked={autoTransition} 
+            onCheckedChange={handleAutoTransitionChange}
+          />
+        </div>
+      )}
+      
       <div className="flex flex-wrap gap-2 justify-center">
         {themes.map((theme) => (
           <button

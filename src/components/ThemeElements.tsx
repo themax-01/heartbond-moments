@@ -1,11 +1,13 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useBond } from '@/context/BondContext';
 
 const ThemeElements: React.FC = () => {
-  const { currentTheme } = useBond();
+  const { currentTheme, setCurrentTheme } = useBond();
   const containerRef = useRef<HTMLDivElement>(null);
+  const [autoTransition, setAutoTransition] = useState(true);
 
+  // Get theme elements for the current theme
   const getThemeSymbol = () => {
     switch (currentTheme) {
       case 'spring':
@@ -23,6 +25,30 @@ const ThemeElements: React.FC = () => {
     }
   };
 
+  // Automatic theme transition
+  useEffect(() => {
+    if (!autoTransition) return;
+
+    const themes = ['spring', 'summer', 'autumn', 'winter', 'blossom'];
+    const currentIndex = themes.indexOf(currentTheme);
+    
+    const transitionInterval = setTimeout(() => {
+      const nextIndex = (currentIndex + 1) % themes.length;
+      setCurrentTheme(themes[nextIndex] as any);
+    }, 60000); // Change theme every 1 minute
+    
+    return () => clearTimeout(transitionInterval);
+  }, [currentTheme, setCurrentTheme, autoTransition]);
+
+  // Load auto transition preference from localStorage
+  useEffect(() => {
+    const savedPref = localStorage.getItem('autoThemeTransition');
+    if (savedPref !== null) {
+      setAutoTransition(savedPref === 'true');
+    }
+  }, []);
+
+  // Update floating elements when theme changes
   useEffect(() => {
     if (!containerRef.current) return;
     

@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { useBond } from '@/context/BondContext';
-import ThemeSelector from '@/components/ThemeSelector';
 import { cn } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
 
@@ -41,13 +40,6 @@ const CreateBondForm: React.FC<CreateBondFormProps> = ({ onBondCreated }) => {
       }
       setError('');
       setStep(2);
-    } else if (step === 2) {
-      if (!reason.trim()) {
-        setError('Please share why you are creating this bond');
-        return;
-      }
-      setError('');
-      setStep(3);
     }
   };
 
@@ -119,17 +111,6 @@ const CreateBondForm: React.FC<CreateBondFormProps> = ({ onBondCreated }) => {
         </div>
       )}
 
-      {step === 3 && (
-        <div className="animate-fade-in flex flex-col items-center">
-          <div className="mb-6 w-full">
-            <ThemeSelector />
-          </div>
-          <p className="text-sm opacity-70 mb-6 text-center">
-            You can always change the theme later.
-          </p>
-        </div>
-      )}
-
       {error && (
         <div className="text-red-500 bg-red-500/10 p-2 rounded-lg mb-4 text-sm">
           {error}
@@ -149,7 +130,7 @@ const CreateBondForm: React.FC<CreateBondFormProps> = ({ onBondCreated }) => {
           <div></div>
         )}
 
-        {step < 3 ? (
+        {step < 2 ? (
           <button
             onClick={handleNextStep}
             className={cn(
