@@ -25,6 +25,14 @@ const ThemeElements: React.FC = () => {
     }
   };
 
+  // Load auto transition preference from localStorage
+  useEffect(() => {
+    const savedPref = localStorage.getItem('autoThemeTransition');
+    if (savedPref !== null) {
+      setAutoTransition(savedPref === 'true');
+    }
+  }, []);
+
   // Automatic theme transition
   useEffect(() => {
     if (!autoTransition) return;
@@ -39,14 +47,6 @@ const ThemeElements: React.FC = () => {
     
     return () => clearTimeout(transitionInterval);
   }, [currentTheme, setCurrentTheme, autoTransition]);
-
-  // Load auto transition preference from localStorage
-  useEffect(() => {
-    const savedPref = localStorage.getItem('autoThemeTransition');
-    if (savedPref !== null) {
-      setAutoTransition(savedPref === 'true');
-    }
-  }, []);
 
   // Update floating elements when theme changes
   useEffect(() => {
