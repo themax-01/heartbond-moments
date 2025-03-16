@@ -1,16 +1,31 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBond } from '@/context/BondContext';
 import { cn } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
 
-const JoinBondForm: React.FC = () => {
+interface JoinBondFormProps {
+  initialCode?: string;
+}
+
+const JoinBondForm: React.FC<JoinBondFormProps> = ({ initialCode }) => {
   const navigate = useNavigate();
   const { joinBond, currentTheme } = useBond();
   const [joinCode, setJoinCode] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Set initial code from props if provided
+  useEffect(() => {
+    if (initialCode && initialCode.trim() !== '') {
+      console.log("Setting join code from URL parameter:", initialCode);
+      setJoinCode(initialCode.toUpperCase());
+      
+      // Optionally auto-join if code is provided via URL
+      // handleJoinBond();
+    }
+  }, [initialCode]);
 
   const buttonClasses = {
     spring: "bg-spring-highlight hover:bg-spring-accent text-white",
@@ -30,19 +45,23 @@ const JoinBondForm: React.FC = () => {
     setError('');
     
     try {
+      console.log("Attempting to join bond with code:", joinCode.trim().toUpperCase());
       const success = await joinBond(joinCode.trim().toUpperCase());
+      
       if (success) {
+        console.log("Successfully joined bond");
         toast({
           title: "Success!",
           description: "You've joined the bond successfully!",
         });
         navigate('/bond');
       } else {
+        console.error("Failed to join bond with code:", joinCode);
         setError('Failed to join bond. Please check the code and try again.');
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
       console.error('Join bond error:', err);
+      setError('An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
     }

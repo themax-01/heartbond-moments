@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useBond } from '@/context/BondContext';
 import HeartAnimation from '@/components/HeartAnimation';
 import { cn } from '@/lib/utils';
@@ -9,9 +10,11 @@ import JoinBondForm from '@/components/bond/JoinBondForm';
 import ShareBondDialog from '@/components/bond/ShareBondDialog';
 
 const CreateBond: React.FC = () => {
+  const { code: joinCodeFromUrl } = useParams<{ code?: string }>();
+  const navigate = useNavigate();
   const { currentTheme, bondCode } = useBond();
   
-  const [isCreateMode, setIsCreateMode] = useState(true);
+  const [isCreateMode, setIsCreateMode] = useState(!joinCodeFromUrl);
   const [localBondCode, setLocalBondCode] = useState('');
   const [showShareDialog, setShowShareDialog] = useState(false);
 
@@ -23,12 +26,21 @@ const CreateBond: React.FC = () => {
     blossom: "bg-gradient-to-b from-blossom-primary to-blossom-secondary",
   };
 
-  // Check if we already have a bond code from context
+  // Handle join code from URL parameter
+  useEffect(() => {
+    if (joinCodeFromUrl) {
+      console.log("Join code detected in URL:", joinCodeFromUrl);
+      setIsCreateMode(false);
+    }
+  }, [joinCodeFromUrl]);
+
+  // Handle bond code from context
   useEffect(() => {
     if (bondCode && !localBondCode) {
+      console.log("Setting local bond code from context:", bondCode);
       setLocalBondCode(bondCode);
     }
-  }, [bondCode]);
+  }, [bondCode, localBondCode]);
 
   const handleBondCreated = (code: string) => {
     console.log("Bond created with code:", code);
@@ -50,7 +62,11 @@ const CreateBond: React.FC = () => {
           </p>
         </div>
 
-        <Tabs value={isCreateMode ? "create" : "join"} onValueChange={(v) => setIsCreateMode(v === "create")} className="w-full">
+        <Tabs 
+          value={isCreateMode ? "create" : "join"} 
+          onValueChange={(v) => setIsCreateMode(v === "create")} 
+          className="w-full"
+        >
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="create">Create Bond</TabsTrigger>
             <TabsTrigger value="join">Join Bond</TabsTrigger>
@@ -61,7 +77,7 @@ const CreateBond: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="join" className="glass-effect rounded-xl p-6 backdrop-blur-md">
-            <JoinBondForm />
+            <JoinBondForm initialCode={joinCodeFromUrl} />
           </TabsContent>
         </Tabs>
       </div>

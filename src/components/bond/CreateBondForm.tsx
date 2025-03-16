@@ -56,13 +56,20 @@ const CreateBondForm: React.FC<CreateBondFormProps> = ({ onBondCreated }) => {
     setError('');
     
     try {
+      console.log("Creating bond with name:", name, "and reason:", reason);
       setBondName(name);
       setBondReason(reason);
       setBondStartDate(new Date());
       
       const code = await createBondWithSupabase();
+      console.log("Bond created with code:", code);
+      
       if (code) {
         setHasBond(true);
+        
+        // Store bond code in localStorage for later retrieval
+        localStorage.setItem('bondCode', code);
+        
         onBondCreated(code);
         toast({
           title: "Bond Created!",

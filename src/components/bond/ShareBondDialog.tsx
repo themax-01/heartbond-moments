@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Copy, CheckCircle } from 'lucide-react';
+import { Copy, CheckCircle, Share2 } from 'lucide-react';
 import { 
   Dialog, 
   DialogContent, 
@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
+import { Input } from '@/components/ui/input';
 
 interface ShareBondDialogProps {
   open: boolean;
@@ -25,6 +26,15 @@ const ShareBondDialog: React.FC<ShareBondDialogProps> = ({
 }) => {
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
+  
+  // Generate shareable URL when bond code changes
+  useEffect(() => {
+    if (bondCode) {
+      const baseUrl = window.location.origin;
+      setShareUrl(`${baseUrl}/join/${bondCode}`);
+    }
+  }, [bondCode]);
   
   // Ensure we have a bond code to display
   useEffect(() => {
@@ -35,6 +45,8 @@ const ShareBondDialog: React.FC<ShareBondDialogProps> = ({
         description: "No bond code available",
         variant: "destructive"
       });
+    } else if (open && bondCode) {
+      console.log("ShareBondDialog opened with code:", bondCode);
     }
   }, [open, bondCode]);
 
@@ -56,9 +68,36 @@ const ShareBondDialog: React.FC<ShareBondDialogProps> = ({
     }
   };
 
+  const copyLinkToClipboard = () => {
+    if (shareUrl) {
+      navigator.clipboard.writeText(shareUrl);
+      toast({
+        title: "Copied!",
+        description: "Invite link copied to clipboard"
+      });
+    }
+  };
+
+  const shareLink = async () => {
+    if (navigator.share && shareUrl) {
+      try {
+        await navigator.share({
+          title: 'Join my HeartBond',
+          text: 'Join our connection in HeartBond with this link:',
+          url: shareUrl,
+        });
+      } catch (err) {
+        console.error('Error sharing:', err);
+        copyLinkToClipboard();
+      }
+    } else {
+      copyLinkToClipboard();
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Share Your Bond Code</DialogTitle>
           <DialogDescription>
@@ -72,11 +111,21 @@ const ShareBondDialog: React.FC<ShareBondDialogProps> = ({
               <h3 className="text-2xl font-bold tracking-widest">{bondCode}</h3>
             </div>
             
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-center mt-4 gap-2">
               <Button onClick={copyCodeToClipboard} className="flex items-center gap-2">
                 {copied ? <CheckCircle size={16} /> : <Copy size={16} />}
                 {copied ? "Copied!" : "Copy Code"}
               </Button>
+            </div>
+            
+            <div className="flex flex-col gap-4 mt-4">
+              <p className="text-sm text-center">Or share this link with your partner:</p>
+              <div className="flex items-center gap-2">
+                <Input value={shareUrl} readOnly className="flex-1" />
+                <Button onClick={shareLink} size="icon">
+                  <Share2 size={16} />
+                </Button>
+              </div>
             </div>
             
             <div className="text-center mt-6">
