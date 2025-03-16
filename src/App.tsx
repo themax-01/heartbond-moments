@@ -8,7 +8,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import CreateBond from "./pages/CreateBond";
 import Bond from "./pages/Bond";
-import { BondProvider } from "./context/BondContext";
+import { BondProvider } from "./context/bond";
 
 const queryClient = new QueryClient();
 
